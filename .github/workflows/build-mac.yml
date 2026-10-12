@@ -1,0 +1,35 @@
+name: Build macOS Executable
+
+on:
+  push:
+    branches: [ "main" ] # Führt den Build automatisch bei jedem Push auf 'main' aus
+  workflow_dispatch: # Erlaubt es dir, den Build manuell unter 'Actions' zu starten
+
+jobs:
+  build:
+    runs-on: macos-latest # Nutzt die neueste macOS-Umgebung von GitHub
+
+    steps:
+    - name: Code auschecken
+      uses: actions/checkout@v4
+
+    - name: Python einrichten
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Abhängigkeiten installieren
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+
+    - name: Ausführbare Datei mit PyInstaller bauen
+      run: |
+        # Hier ist dein exakter Dateiname eingetragen
+        pyinstaller --onefile AlleFormenAusrechnen.py
+
+    - name: Datei als Artefakt hochladen
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-executable
+        path: dist/
